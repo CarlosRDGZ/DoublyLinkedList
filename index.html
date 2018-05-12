@@ -48,9 +48,6 @@
 							<p class="control">
 								<button class="button is-success" @click="add">Agregar</button>
 							</p>
-							<p class="control">
-								<button class="button is-success" @click="addAtBeginig">Agregar al Inicio</button>
-							</p>
 						</div>
 	
 						<br>
@@ -111,28 +108,18 @@
 				</div>
 			</div>
 		</main>
-		<section class="section">
-			<div class="container">
-				<div class="columns">
-					<div class="column">
-						<div class="content">
-							<pre>{{ catalog.first }}</pre>
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
 	</div>
 </body>
 </html>
 <script src="Vue.js"></script>
+<script src="md5.js"></script>
 <script src="Product.js"></script>
 <script src="List.js"></script>
 <script>
 	const vm = new Vue({
 		el: '#app',
 		data: {
-			catalog: new LinkedList(),
+			catalog: new List(),
 			items: [],
 			form: {
 				name: '',
@@ -140,30 +127,24 @@
 				quantity: '',
 				cost: '',
 				code: '',
-				id: 1
 			}
 		},
 		methods: {
 			add: function() {
 				const node = new Product(
-					String(this.form.id++),
+					md5(Math.random()),
 					this.form.name, this.form.description,
 					Number(this.form.quantity),
 					Number(this.form.cost))
 				this.catalog.add(node)
 				this.items = this.catalog.toArray()
 			},
-			addAtBeginig: function() {
-				const node = new Product(
-					String(this.form.id++),
-					this.form.name, this.form.description,
-					Number(this.form.quantity),
-					Number(this.form.cost))
-				this.catalog.addAtBeginig(node)
-				this.items = this.catalog.toArray()
-			},
 			search: function() {
-				this.items = [this.catalog.search(this.form.code)]
+				let product = this.catalog.search(this.form.code)
+				if (product !== null)
+					this.items = [product]
+				else
+					window.alert('Producto no encotrado')
 			},
 			remove: function() {
 				this.catalog.delete(this.form.code)
