@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<link rel="stylesheet" href="bulma.css">
+	<title>Catalogo</title>
+</head>
+<body>
+	<div id="app">
+		<main class="section">
+			<div class="container has-text-centered">
+				<h1 class="title">Cat&aacute;logo</h1>
+				<div class="columns has-text-left">
+					<div class="column is-half">
+						<div class="field">
+							<label class="label">Nombre</label>
+							<p class="control">
+								<input type="text" class="input" placeholder="Nombre" v-model="form.name">
+							</p>
+						</div>
+						
+						<div class="field">
+							<label class="label">Descripci&oacute;n</label>
+							<p class="control">
+								<input type="text" class="input" placeholder="Descripcion" v-model="form.description">
+							</p>
+						</div>
+	
+						<div class="field is-horizontal">
+							<div class="field-body">
+								<div class="field">
+									<label class="label">Cantidad</label>
+									<p class="control">
+										<input type="number" class="input" placeholder="0" v-model="form.quantity">
+									</p>
+								</div>
+								<div class="field">
+									<label class="label">Costo</label>
+									<p class="control">
+										<input type="number" class="input" placeholder="0.00" v-model="form.cost">
+									</p>
+								</div>	
+							</div>
+						</div>
+						<div class="field is-grouped">
+							<p class="control">
+								<button class="button is-success" @click="add">Agregar</button>
+							</p>
+							<p class="control">
+								<button class="button is-success" @click="addAtBeginig">Agregar al Inicio</button>
+							</p>
+						</div>
+	
+						<br>
+	
+						<div class="field is-grouped">
+							<p class="control">
+								<input class="input" type="text" placeholder="Codigo" v-model="form.code">
+							</p>
+							<p class="control">
+								<button class="button is-info" @click="search">Buscar</button>
+							</p>
+							<p class="control">
+								<button class="button is-danger" @click="remove">Eliminar</button>
+							</p>
+						</div>
+						<div class="field is-grouped">
+							<p class="control">
+								<button class="button is-danger" @click="removeFirst">Eliminar Primero</button>
+							</p>
+							<p class="control">
+								<button class="button is-danger" @click="removeLast">Eliminar Ultimo</button>
+							</p>
+						</div>
+					</div>
+					<div class="column">
+						<div class="field is-grouped is-grouped-centered">
+							<p class="control">
+								<button class="button is-primary" @click="list">Listar</button>
+							</p>
+							<p class="control">
+								<button class="button is-info" @click="listReverse">Listar inverso</button>
+							</p>
+							<p class="control">
+								<button class="button is-link" @click="reverse">Invertir</button>
+							</p>
+						</div>
+						<table class="table is-striped is-fullwidth">
+							<thead>
+								<tr>
+									<th>Codigo</th>
+									<th>Nombre</th>
+									<th>Descripcion</th>
+									<th>Cantidad</th>
+									<th>Costo</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr v-for="item in items">
+									<th>{{ item.code }}</th>
+									<th>{{ item.name }}</th>
+									<th>{{ item.description }}</th>
+									<th>{{ item.quantity }}</th>
+									<th>${{ item.cost.toFixed(2) }}</th>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</main>
+		<section class="section">
+			<div class="container">
+				<div class="columns">
+					<div class="column">
+						<div class="content">
+							<pre>{{ catalog.first }}</pre>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
+</body>
+</html>
+<script src="Vue.js"></script>
+<script src="Product.js"></script>
+<script src="List.js"></script>
+<script>
+	const vm = new Vue({
+		el: '#app',
+		data: {
+			catalog: new LinkedList(),
+			items: [],
+			form: {
+				name: '',
+				description: '',
+				quantity: '',
+				cost: '',
+				code: '',
+				id: 1
+			}
+		},
+		methods: {
+			add: function() {
+				const node = new Product(
+					String(this.form.id++),
+					this.form.name, this.form.description,
+					Number(this.form.quantity),
+					Number(this.form.cost))
+				this.catalog.add(node)
+				this.items = this.catalog.toArray()
+			},
+			addAtBeginig: function() {
+				const node = new Product(
+					String(this.form.id++),
+					this.form.name, this.form.description,
+					Number(this.form.quantity),
+					Number(this.form.cost))
+				this.catalog.addAtBeginig(node)
+				this.items = this.catalog.toArray()
+			},
+			search: function() {
+				this.items = [this.catalog.search(this.form.code)]
+			},
+			remove: function() {
+				this.catalog.delete(this.form.code)
+				this.items = this.catalog.toArray()
+			},
+			removeFirst: function() {
+				this.catalog.deleteFirst()
+				this.items = this.catalog.toArray()
+			},
+			removeLast: function() {
+				this.catalog.deleteLast()
+				this.items = this.catalog.toArray()
+			},
+			reverse: function() {
+				this.catalog.reverse()
+				this.items = this.catalog.toArray()
+			},
+			list: function() {
+				this.items = this.catalog.toArray()
+			},
+			listReverse: function() {
+				this.items = this.catalog.toReverseArray()
+			}
+		}
+	})
+</script>
